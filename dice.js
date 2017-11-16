@@ -14,6 +14,10 @@ dice.prototype.keys = function() {
   return ret;
 }
 
+dice.prototype.maxFace = function() {
+  return Math.max.apply(null, this.keys());
+}
+
 dice.prototype.values = function() {
   var keys = this.keys();
   var ret = [];
@@ -45,6 +49,14 @@ dice.prototype.increment = function(val, count) {
     this[val] = 0;
 
   this[val] += count;
+}
+
+dice.prototype.normalize = function(scalar) {
+  var ret = Object.assign(new dice(0), this);
+  for (var key of ret.keys()) {
+    ret[key] *= scalar;
+  }
+  return ret;
 }
 
 function dfunc(name, f) {
@@ -81,7 +93,7 @@ dfunc('subtract', function(a, b) {
 })
 
 dfunc('multiply', function(a, b) {
-  return a * b;
+  return (a == 0 ? 0 : 1) * b;
 })
 
 dice.prototype.changeface = function(old, n) {
@@ -95,7 +107,7 @@ dice.prototype.changeface = function(old, n) {
   return ret;
 }
 
-dice.prototype.deleteface = function(n) {
+dice.prototype.deleteFace = function(n) {
   var ret = Object.assign(new dice(0), this);
   delete ret[n];
   return ret;
@@ -112,7 +124,10 @@ dfunc('min', function(a, b) {
 dfunc('ge', function(a, b) {
   return (a >= b) ? 1 : 0;
 })
-dice.prototype.dc = dice.prototype.ge;
+
+dfunc('dc', function(a, b) {
+  return (a >= b) ? a : 0;
+})
 
 dfunc('divide', function(a, b) {
   return a / b;
@@ -162,7 +177,29 @@ function parseExpression(arr) {
   var ret = parseArgument(arr);
   var op;
   while ((op = parseOperation(arr)) != null) {
-    ret = op.apply(ret, [parseArgument(arr)]);
+    var arg = parseArgument(arr);
+    // crit
+    var crit = arr.length && arr[0] == '!'
+    if (crit) {
+      assertToken(arr, '!');
+      crit = new dice(0);
+      var max = ret.maxFace();
+      crit[max] = ret[max];
+      var critNormalize = crit.total();
+      ret = ret.deleteFace(max);
+      crit = op.apply(crit, [parseArgument(arr)]);
+      critNormalize = crit.total() / critNormalize;
+    }
+
+    var normalize = ret.total();
+    ret = op.apply(ret, [arg]);
+    normalize = ret.total() / normalize;
+    if (crit) {
+      crit = crit.normalize(normalize);
+      ret = ret.normalize(critNormalize);
+      //ret = ret.normalize(normalize);
+      ret = ret.combine(crit);
+    }
   }
   return ret;
 }
@@ -240,7 +277,7 @@ function parseDice(s) {
   var n = parseNumber(s);
   var ret = new dice(n);
   if (rerollOne)
-    ret = ret.deleteface(1).combine(ret);
+    ret = ret.deleteFace(1).combine(ret);
   return ret;
 }
 
@@ -300,4 +337,4 @@ d8 = new dice(8);
 d10 = new dice(10);
 d20 = new dice(20);
 // halfling d20!
-hd20 = d20.deleteface(1).combine(d20);
+hd20 = d20.deleteFace(1).combine(d20);
