@@ -1,0 +1,66 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dice Calculator</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="dice.js"></script>
+    <script src="index.js"></script>
+  </head>
+
+  <body>
+
+    <main role="main" class="container">
+      <form id='form'>
+        <div class="form-group">
+          <label for="expression">Enter Expression</label>
+          <input class="form-control" id="expression" placeholder="d20" value='d20'>
+        </div>
+        <button type="submit" class="btn btn-primary">Calculate</button>
+        <div class='form-group' id='results'>
+        </div>
+        <div id="chart_div"></div>
+        <div class="form-group">
+          <br/>
+          <small class="form-text text-muted">Examples:</small>
+          <br/>
+          <small class="form-text text-muted">Roll a d20</small>
+          <small class="form-text text-muted">d20</small>
+          <br/>
+          <small class="form-text text-muted">Roll a d20, but reroll on 1 (halfling d20)</small>
+          <small class="form-text text-muted">hd20</small>
+          <br/>
+          <small class="form-text text-muted">Choose the greater of two d20 rolls (advantage)</small>
+          <small class="form-text text-muted">d20 > d20</small>
+          <br/>
+          <small class="form-text text-muted">Choose the lesser of two d20 rolls (disadvantage)</small>
+          <small class="form-text text-muted">d20 < d20</small>
+          <br/>
+          <small class="form-text text-muted">Attack Roll against Armor 15</small>
+          <small class="form-text text-muted">d20 + 6 DC 15</small>
+          <br/>
+          <small class="form-text text-muted">Attack Roll against Armor 15 with 2d6 + 4 weapon</small>
+          <small class="form-text text-muted">(d20 + 6 DC 15) * (2d6 + 4)</small>
+          <br/>
+          <small class="form-text text-muted">Attack Roll (with advantage) against Armor 15 with 2d6 + 4 weapon</small>
+          <small class="form-text text-muted">(d20 > d20 + 6 DC 15) * (2d6 + 4)</small>
+        </div>
+      </form>
+    </main><!-- /.container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- <script src="bootstrap/js/bootstrap.min.js"></script> -->
+  </body>
+</html>
