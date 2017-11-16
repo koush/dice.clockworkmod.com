@@ -13,19 +13,22 @@ $(document).ready(function() {
       var faces = val.keys();
       $('#results').append($('<div></div>').text('Average: ' + average).addClass('form-text'))
 
-      var data = new google.visualization.DataTable();
-      data.addColumn('string', 'Result');
-      data.addColumn('number', 'Percent');
+      // var data = new google.visualization.DataTable();
+      // data.addColumn('string', 'Result');
+      // data.addColumn('number', 'Percent');
 
-      var rows = [];
+      var rows = [['Result', 'Percent']];
       for (var face of faces) {
-        rows.push([face.toString(), percent[face] * 100]);
+        rows.push([face, percent[face] * 100]);
       }
-      data.addRows(rows);
+      // data.addRows(rows);
+
+      var data = google.visualization.arrayToDataTable(rows);
 
       // Set chart options
       var options = {'title':'Results',
                       bars: 'vertical', // Required for Material Bar Charts.
+                      legend: { position: "none" },
                      };
 
       // Instantiate and draw our chart, passing in some options.
