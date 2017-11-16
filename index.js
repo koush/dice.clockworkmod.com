@@ -39,4 +39,14 @@ $(document).ready(function() {
       $('#results').text(e)
     }
   });
+
+
+  for (var e of $('.example')) {
+    $(e).html('<a href="#">' + $(e).text() + "</a>")
+  }
+
+  $('.example').click(function(e) {
+    $('#expression').val($(e.target).text())
+    $('#form').submit()
+  })
 })
