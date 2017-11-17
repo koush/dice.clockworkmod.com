@@ -2,7 +2,14 @@ function dice(x) {
   for (var i = 1; i <= x; i++) {
     this[i] = 1;
   }
+
+
+  Object.defineProperty(this, "except", {
+      enumerable: false,
+      writable: true
+  });
 }
+
 
 dice.prototype.keys = function() {
   var ret = [];
@@ -16,6 +23,10 @@ dice.prototype.keys = function() {
 
 dice.prototype.maxFace = function() {
   return Math.max.apply(null, this.keys());
+}
+
+dice.prototype.minFace = function() {
+  return Math.min.apply(null, this.keys());
 }
 
 dice.prototype.values = function() {
@@ -41,7 +52,10 @@ function parseKey(key) {
     return false;
   if (key === "true")
     return true;
-  return parseFloat(key);
+  var ret = parseFloat(key);
+  if (isNaN(ret))
+    return key;
+  return ret;
 }
 
 dice.prototype.increment = function(val, count) {
@@ -125,7 +139,9 @@ dfunc('ge', function(a, b) {
   return (a >= b) ? 1 : 0;
 })
 
-dfunc('dc', function(a, b) {
+dice.prototype.dc = dice.prototype.ge;
+
+dfunc('ac', function(a, b) {
   return (a >= b) ? a : 0;
 })
 
@@ -157,9 +173,13 @@ dice.prototype.average = function() {
 
 dice.prototype.combine = function(d) {
   var ret = Object.assign(new dice(0), d);
+  var except = Object.assign(new dice(0), d);
   for (var key of this.keys()) {
     ret.increment(key, this[key]);
+    delete except[key];
   }
+  ret.except = except;
+  ret.except = d;
   return ret;
 }
 
@@ -170,7 +190,10 @@ function parse(s) {
   for (var c of s) {
     arr.push(c);
   }
-  return parseExpression(arr);
+  var ret = parseExpression(arr);
+  if (arr.length)
+    throw new Error('unexpected ' + arr[0]);
+  return ret;
 }
 
 function parseExpression(arr) {
@@ -179,9 +202,12 @@ function parseExpression(arr) {
   while ((op = parseOperation(arr)) != null) {
     var arg = parseArgument(arr);
     // crit
-    var crit = arr.length && arr[0] == '!'
+    var crit = arr.length && arr[0] == 'c'
     if (crit) {
-      assertToken(arr, '!');
+      assertToken(arr, 'c');
+      assertToken(arr, 'r');
+      assertToken(arr, 'i');
+      assertToken(arr, 't');
       crit = new dice(0);
       var max = ret.maxFace();
       crit[max] = ret[max];
@@ -191,14 +217,36 @@ function parseExpression(arr) {
       critNormalize = crit.total() / critNormalize;
     }
 
+    var fail = arr.length && arr[0] == 'f';
+    if (fail) {
+      assertToken(arr, 'f');
+      assertToken(arr, 'a');
+      assertToken(arr, 'i');
+      assertToken(arr, 'l');
+      fail = new dice(0);
+      var min = ret.minFace();
+      fail[1] = ret[min];
+      var failNormalize = fail.total();
+      ret = ret.deleteFace(min);
+      fail = op.apply(fail, [parseArgument(arr)]);
+      failNormalize = fail.total() / failNormalize;
+    }
+
     var normalize = ret.total();
     ret = op.apply(ret, [arg]);
     normalize = ret.total() / normalize;
     if (crit) {
       crit = crit.normalize(normalize);
       ret = ret.normalize(critNormalize);
-      //ret = ret.normalize(normalize);
       ret = ret.combine(crit);
+      normalize *= critNormalize;
+    }
+
+    if (fail) {
+      fail = fail.normalize(normalize);
+      ret = ret.normalize(failNormalize);
+      ret = ret.combine(fail);
+      normalize *= failNormalize;
     }
   }
   return ret;
@@ -221,6 +269,18 @@ function parseNumber(s) {
   return parseInt(ret);
 }
 
+function multiplyDice(n, dice) {
+  if (n == 1)
+    return dice;
+
+  var h = Math.floor(n / 2);
+  var ret = multiplyDice(h, dice);
+  ret = ret.add(ret);
+  if (n % 2 == 1)
+    ret = ret.add(dice);
+  return ret;
+}
+
 function parseNumberOrDice(s) {
   var n = parseNumber(s);
   if (s.length < 2 || s[0] != 'd' || !isNumber(s[1]))
@@ -228,11 +288,7 @@ function parseNumberOrDice(s) {
   var d = parseDice(s);
   if (n == 0)
     return 0;
-  var ret = d;
-  for (var i = 1; i < n; i++) {
-    ret = ret.add(d);
-  }
-  return ret;
+  return multiplyDice(n, d);
 }
 
 function isNumber(c) {
@@ -312,6 +368,10 @@ function parseOperation(s) {
     case ')':
       return;
     // dc check
+    case 'a':
+      assertToken(s, 'a');
+      assertToken(s, 'c');
+      return dice.prototype.ac;
     case 'd':
       assertToken(s, 'd');
       assertToken(s, 'c');
