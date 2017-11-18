@@ -198,6 +198,12 @@ function parse(s) {
 
 function parseExpression(arr) {
   var ret = parseArgument(arr);
+  if (ret.constructor.name == 'Number') {
+    var scalar = ret;
+    ret = new dice(0);
+    ret[scalar] = 1;
+  }
+
   var op;
   while ((op = parseOperation(arr)) != null) {
     var arg = parseArgument(arr);
@@ -385,6 +391,9 @@ function parseOperation(s) {
     case '+':
       assertToken(s, '+');
       return dice.prototype.add;
+    case '&':
+      assertToken(s, '&');
+      return dice.prototype.combine;
     case '*':
       assertToken(s, '*');
       return dice.prototype.multiply;
