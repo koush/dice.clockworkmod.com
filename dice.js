@@ -178,7 +178,6 @@ dice.prototype.combine = function(d) {
     ret.increment(key, this[key]);
     delete except[key];
   }
-  ret.except = except;
   ret.except = d;
   return ret;
 }
@@ -231,7 +230,7 @@ function parseExpression(arr) {
       assertToken(arr, 'l');
       fail = new dice(0);
       var min = ret.minFace();
-      fail[1] = ret[min];
+      fail[min > 0 ? min : 1] = ret[min];
       var failNormalize = fail.total();
       ret = ret.deleteFace(min);
       fail = op.apply(fail, [parseArgument(arr)]);
@@ -289,9 +288,11 @@ function multiplyDice(n, dice) {
 
 function parseNumberOrDice(s) {
   var n = parseNumber(s);
-  if (s.length < 2 || s[0] != 'd' || !isNumber(s[1]))
+  // if (s.length < 2 || s[0] != 'd' || !isNumber(s[1]))
+  //   return n;
+  var d = parseArgument(s);
+  if (!d)
     return n;
-  var d = parseDice(s);
   if (n == 0)
     return 0;
   return multiplyDice(n, d);
