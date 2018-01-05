@@ -149,6 +149,10 @@ dfunc('divide', function(a, b) {
   return a / b;
 })
 
+dfunc('divideRoundDown', function(a, b) {
+  return Math.floor(a / b);
+})
+
 dfunc('and', function(a, b) {
   return a && b;
 })
@@ -195,6 +199,18 @@ function parse(s) {
   return ret;
 }
 
+function parseBinaryArgument(arg, arr) {
+  var half = arr.length && arr[0] == 'h';
+  if (!half)
+    return parseArgument(arr);
+
+  assertToken(arr, 'h');
+  assertToken(arr, 'a');
+  assertToken(arr, 'l');
+  assertToken(arr, 'f');
+  return arg.divideRoundDown(2);
+}
+
 function parseExpression(arr) {
   var ret = parseArgument(arr);
   if (ret.constructor.name == 'Number') {
@@ -207,7 +223,7 @@ function parseExpression(arr) {
   while ((op = parseOperation(arr)) != null) {
     var arg = parseArgument(arr);
     // crit
-    var crit = arr.length && arr[0] == 'c'
+    var crit = arr.length && arr[0] == 'c';
     if (crit) {
       assertToken(arr, 'c');
       assertToken(arr, 'r');
@@ -218,7 +234,7 @@ function parseExpression(arr) {
       crit[max] = ret[max];
       var critNormalize = crit.total();
       ret = ret.deleteFace(max);
-      crit = op.apply(crit, [parseArgument(arr)]);
+      crit = op.apply(crit, [parseBinaryArgument(arg, arr)]);
       critNormalize = crit.total() / critNormalize;
     }
 
@@ -233,7 +249,7 @@ function parseExpression(arr) {
       fail[min > 0 ? min : 1] = ret[min];
       var failNormalize = fail.total();
       ret = ret.deleteFace(min);
-      fail = op.apply(fail, [parseArgument(arr)]);
+      fail = op.apply(fail, [parseBinaryArgument(arg, arr)]);
       failNormalize = fail.total() / failNormalize;
     }
 
@@ -288,8 +304,6 @@ function multiplyDice(n, dice) {
 
 function parseNumberOrDice(s) {
   var n = parseNumber(s);
-  // if (s.length < 2 || s[0] != 'd' || !isNumber(s[1]))
-  //   return n;
   var d = parseArgument(s);
   if (!d)
     return n;
@@ -332,11 +346,36 @@ function isDice(s) {
   return isNumber(s[index]);
 }
 
+function peek(arr, expected) {
+  if (expected.length > arr.length)
+    return false;
+  for (var i = 0; i < expected.length; i++) {
+    if (arr[i] != expected.charAt(i))
+      return false;
+  }
+  return true;
+}
+
+function peekIsNumber(arr, index) {
+  if (index >= arr.length)
+    return false;
+  return isNumber(arr[index]);
+}
+
 function parseDice(s) {
-  var rerollOne = s[0] == 'h';
-  if (rerollOne)
+  var rerollOne;
+  if (peek(s, 'hd') && peekIsNumber(s, 2)) {
     assertToken(s, 'h');
-  assertToken(s, 'd');
+    assertToken(s, 'd');
+    rerollOne = true;
+  }
+  else if (peek(s, 'd') && peekIsNumber(s, 1)) {
+    assertToken(s, 'd');
+  }
+  else {
+    return;
+  }
+
   var n = parseNumber(s);
   var ret = new dice(n);
   if (rerollOne)

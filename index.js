@@ -19,7 +19,7 @@ $(document).ready(function() {
       for (var face of faces) {
         var crit = (except[face] || 0);
         var all = val[face];
-        rows.push([face, (all - crit) * 100 / total, crit * 100 / total]);
+        rows.push([face, (all - crit) / total, crit / total]);
       }
 
       var data = google.visualization.arrayToDataTable(rows);
@@ -29,6 +29,7 @@ $(document).ready(function() {
         vAxes: {
           0: {
             title:'Percent',
+            format: 'percent',
           }
         },
         isStacked: true,
