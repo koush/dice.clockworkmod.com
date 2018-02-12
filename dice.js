@@ -88,7 +88,6 @@ function dfunc(name, f) {
           ret.increment(f(key, key2), d[key2] * this[key]);
         }
       }
-
     }
     return ret;
   }
@@ -110,7 +109,7 @@ dfunc('multiply', function(a, b) {
   return (a == 0 ? 0 : 1) * b;
 })
 
-dice.prototype.changeface = function(old, n) {
+dice.prototype.changeFace = function(old, n) {
   var ret = Object.assign(new dice(0), this);
 
   if (old in ret) {
@@ -125,6 +124,20 @@ dice.prototype.deleteFace = function(n) {
   var ret = Object.assign(new dice(0), this);
   delete ret[n];
   return ret;
+}
+
+dice.prototype.reroll = function(d) {
+  if (d.constructor.name == 'Number')
+    d = scalarDice(d);
+
+  var ret = Object.assign(new dice(0), this);
+
+  var numbers = d.keys();
+  for (var face of numbers) {
+    ret = ret.deleteFace(face);
+  }
+
+  return ret.combine(this);
 }
 
 dfunc('max', function(a, b) {
@@ -186,23 +199,23 @@ dice.prototype.combine = function(d) {
   return ret;
 }
 
-function parse(s) {
+function parse(s, n) {
   // clear out whitespace
   s = s.replace(/ /g, '').toLowerCase();
   var arr = [];
   for (var c of s) {
     arr.push(c);
   }
-  var ret = parseExpression(arr);
+  var ret = parseExpression(arr, n);
   if (arr.length)
     throw new Error('unexpected ' + arr[0]);
   return ret;
 }
 
-function parseBinaryArgument(arg, arr) {
+function parseBinaryArgument(arg, arr, n) {
   var half = arr.length && arr[0] == 'h';
   if (!half)
-    return parseArgument(arr);
+    return parseArgument(arr, n);
 
   assertToken(arr, 'h');
   assertToken(arr, 'a');
@@ -211,17 +224,14 @@ function parseBinaryArgument(arg, arr) {
   return arg.divideRoundDown(2);
 }
 
-function parseExpression(arr) {
-  var ret = parseArgument(arr);
-  if (ret.constructor.name == 'Number') {
-    var scalar = ret;
-    ret = new dice(0);
-    ret[scalar] = 1;
-  }
+function parseExpression(arr, n) {
+  var ret = parseArgument(arr, n);
+  if (ret.constructor.name == 'Number')
+    ret = new scalarDice(ret);
 
   var op;
   while ((op = parseOperation(arr)) != null) {
-    var arg = parseArgument(arr);
+    var arg = parseArgument(arr, n);
     // crit
     var crit = arr.length && arr[0] == 'c';
     if (crit) {
@@ -234,7 +244,7 @@ function parseExpression(arr) {
       crit[max] = ret[max];
       var critNormalize = crit.total();
       ret = ret.deleteFace(max);
-      crit = op.apply(crit, [parseBinaryArgument(arg, arr)]);
+      crit = op.apply(crit, [parseBinaryArgument(arg, arr, n)]);
       critNormalize = crit.total() / critNormalize;
     }
 
@@ -249,7 +259,7 @@ function parseExpression(arr) {
       fail[min > 0 ? min : 1] = ret[min];
       var failNormalize = fail.total();
       ret = ret.deleteFace(min);
-      fail = op.apply(fail, [parseBinaryArgument(arg, arr)]);
+      fail = op.apply(fail, [parseBinaryArgument(arg, arr, n)]);
       failNormalize = fail.total() / failNormalize;
     }
 
@@ -280,36 +290,77 @@ function assertToken(s, c, ret) {
   return ret;
 }
 
-function parseNumber(s) {
+function parseNumber(s, n) {
   var ret = '';
-  while (s[0] >= '0' && s[0] <= '9') {
-    ret += s.shift();
+  while ((s[0] >= '0' && s[0] <= '9') || s[0] == 'n') {
+    if (s[0] != 'n') {
+      ret += s.shift();
+    }
+    else {
+      s.shift();
+      ret += n;
+    }
   }
   if (!ret.length)
     throw new Error('expected number, found: ' + s[0]);
   return parseInt(ret);
 }
 
-function multiplyDice(n, dice) {
+function multiplyDice(n, d) {
+  if (n == 0)
+    return new dice(0);
+
   if (n == 1)
-    return dice;
+    return d;
 
   var h = Math.floor(n / 2);
-  var ret = multiplyDice(h, dice);
+  var ret = multiplyDice(h, d);
   ret = ret.add(ret);
   if (n % 2 == 1)
-    ret = ret.add(dice);
+    ret = ret.add(d);
+    delete ret
   return ret;
 }
 
-function parseNumberOrDice(s) {
-  var n = parseNumber(s);
-  var d = parseArgument(s);
+function scalarDice(n) {
+  var ret = new dice(0);
+  ret[n] = 1;
+  return ret;
+}
+
+function multiplyDiceByDice(dice1, dice2) {
+  if (dice1.constructor.name == 'Number')
+    dice1 = scalarDice(dice1);
+  if (dice2.constructor.name == 'Number')
+    dice2 = scalarDice(dice2);
+
+  var ret = new dice(0);
+  var faces = {};
+  var numbers = dice1.keys();
+  var faceNormalize = 1;
+  for (var key of numbers) {
+    var face = multiplyDice(key, dice2);
+    faceNormalize *= face.total();
+    faces[key] = face;
+  }
+
+  for (var key in faces) {
+    var face = faces[key];
+    ret = ret.combine(face.normalize(dice1[key] * faceNormalize / face.total()))
+  }
+
+  ret.except = {};
+  return ret;
+}
+
+function parseNumberOrDice(s, n) {
+  var number = parseNumber(s, n);
+  var d = parseArgument(s, n);
   if (!d)
-    return n;
-  if (n == 0)
+    return number;
+  if (number == 0)
     return 0;
-  return multiplyDice(n, d);
+  return multiplyDice(number, d);
 }
 
 function isNumber(c) {
@@ -324,6 +375,7 @@ function isNumber(c) {
     case '7':
     case '8':
     case '9':
+    case 'n':
       return true;
   }
   return false;
@@ -383,14 +435,23 @@ function parseDice(s) {
   return ret;
 }
 
-function parseArgument(s) {
+function parseArgument(s, n) {
+  var ret = parseArgumentInternal(s, n);
+  var multiply;
+  while (multiply = parseArgumentInternal(s, n)) {
+    ret = multiplyDiceByDice(ret, multiply);
+  }
+  return ret;
+}
+
+function parseArgumentInternal(s, n) {
   if (!s.length)
     return;
   var c = s[0];
   switch (c) {
     case '(':
       s.shift();
-      return assertToken(s, ')', parseExpression(s));
+      return assertToken(s, ')', parseExpression(s, n));
     case 'h':
     case 'd':
       return parseDice(s);
@@ -404,7 +465,8 @@ function parseArgument(s) {
     case '7':
     case '8':
     case '9':
-      return parseNumberOrDice(s);
+    case 'n':
+      return parseNumber(s, n);
   }
 }
 
@@ -434,6 +496,14 @@ function parseOperation(s) {
     case '&':
       assertToken(s, '&');
       return dice.prototype.combine;
+    case 'r':
+      assertToken(s, 'r');
+      assertToken(s, 'e');
+      assertToken(s, 'r');
+      assertToken(s, 'o');
+      assertToken(s, 'l');
+      assertToken(s, 'l');
+      return dice.prototype.reroll;
     case '*':
       assertToken(s, '*');
       return dice.prototype.multiply;
@@ -441,9 +511,11 @@ function parseOperation(s) {
 }
 
 // console variables
+d4 = new dice(4);
 d6 = new dice(6);
 d8 = new dice(8);
 d10 = new dice(10);
+d12 = new dice(12);
 d20 = new dice(20);
 // halfling d20!
 hd20 = d20.deleteFace(1).combine(d20);

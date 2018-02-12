@@ -13,6 +13,7 @@
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="dice.js"></script>
     <script src="index.js"></script>
   </head>
@@ -31,7 +32,29 @@
           <label for="expression">Enter Expression</label>
           <input class="form-control" id="expression" placeholder="d20" value='d20'>
         </div>
-        <button type="submit" class="btn btn-primary">Calculate</button>
+
+        <div class="form-group">
+        <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#advanced" aria-expanded="false" aria-controls="advanced" id='advanced-btn'>Advanced</button>
+      </div>
+        <div class="collapse multi-collapse form-group" id='advanced'>
+          <label for="iterate">iterate value "n"</label>
+          <select class="form-control" id="iterate">
+            <option>None</option>
+            <option>1</option>
+            <option>2</option>
+            <option>3</option>
+            <option>4</option>
+            <option>5</option>
+            <option>6</option>
+            <option>7</option>
+            <option>8</option>
+            <option>9</option>
+            <option>10</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Analyze</button>
+        <button type="submit" class="btn btn-info" id='roll'>Roll</button>
         <div class='form-group' id='results'>
         </div>
         <div id="chart_div"></div>
@@ -43,6 +66,7 @@
           <small class="form-text text-muted example">d20</small>
           <br/>
           <small class="form-text text-muted">Roll a d20, but reroll on 1 (halfling d20)</small>
+          <small class="form-text text-muted example">d20 reroll 1</small>
           <small class="form-text text-muted example">hd20</small>
           <br/>
           <small class="form-text text-muted">Choose the greater of two d20 rolls (advantage)</small>
@@ -79,6 +103,6 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <!-- <script src="bootstrap/js/bootstrap.min.js"></script> -->
+    <script src="bootstrap/js/bootstrap.min.js"></script>
   </body>
 </html>
