@@ -67,7 +67,7 @@ $(document).ready(function() {
 
         var rows = [['Result', 'Normal', "Crit/Fail"]];
         var total = val.total();
-        var except = val.except || {};
+        var except = val.private.except || {};
         for (var face of faces) {
           var crit = (except[face] || 0);
           var all = val[face];

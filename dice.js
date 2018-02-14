@@ -4,12 +4,13 @@ function dice(x) {
   }
 
 
-  Object.defineProperty(this, "except", {
+  Object.defineProperty(this, "private", {
       enumerable: false,
       writable: true
   });
-}
 
+  this.private = {};
+}
 
 dice.prototype.keys = function() {
   var ret = [];
@@ -195,7 +196,7 @@ dice.prototype.combine = function(d) {
     ret.increment(key, this[key]);
     delete except[key];
   }
-  ret.except = d;
+  ret.private.except = d;
   return ret;
 }
 
@@ -284,9 +285,11 @@ function parseExpression(arr, n) {
 }
 
 function assertToken(s, c, ret) {
-  var found = s.shift();
-  if (found != c)
-    throw new Error('expected character ' + c)
+  for (var ch of c) {
+    var found = s.shift();
+    if (found != ch)
+      throw new Error('expected character ' + c)
+  }
   return ret;
 }
 
@@ -304,6 +307,38 @@ function parseNumber(s, n) {
   if (!ret.length)
     throw new Error('expected number, found: ' + s[0]);
   return parseInt(ret);
+}
+
+function opDiceInternal(d, ret, i, collect, freq, f) {
+  if (i == d.length) {
+    return ret.combine(scalarDice(f(collect)).normalize(freq));
+  }
+
+  var self = d[i];
+  var numbers = self.keys();
+  for (var key of numbers) {
+    collect.push(key);
+    ret = opDiceInternal(d, ret, i + 1, collect, freq * self[key], f);
+    collect.pop();
+  }
+
+  return ret;
+}
+
+function opDice(d, f) {
+  return opDiceInternal(d, new dice(0), 0, [], 1, f);
+}
+
+function keepN(n, low) {
+  return function(collect) {
+    collect = collect.slice();
+    collect.sort(function(a, b) {
+      return low ? a - b : b - a;
+    });
+
+    collect = collect.slice(0, n);
+    return collect.reduce((acc, cur) => acc + cur, 0);
+  }
 }
 
 function multiplyDice(n, d) {
@@ -334,12 +369,23 @@ function multiplyDiceByDice(dice1, dice2) {
   if (dice2.constructor.name == 'Number')
     dice2 = scalarDice(dice2);
 
+
   var ret = new dice(0);
   var faces = {};
   var numbers = dice1.keys();
   var faceNormalize = 1;
   for (var key of numbers) {
-    var face = multiplyDice(key, dice2);
+    var face;
+    if (dice2.private.keep) {
+      var repeat = [];
+      for (var i = 0; i < key; i++) {
+        repeat.push(dice2);
+      }
+      face = opDice(repeat, dice2.private.keep);
+    }
+    else {
+      face = multiplyDice(key, dice2);
+    }
     faceNormalize *= face.total();
     faces[key] = face;
   }
@@ -349,7 +395,7 @@ function multiplyDiceByDice(dice1, dice2) {
     ret = ret.combine(face.normalize(dice1[key] * faceNormalize / face.total()))
   }
 
-  ret.except = {};
+  ret.private.except = {};
   return ret;
 }
 
@@ -414,7 +460,7 @@ function peekIsNumber(arr, index) {
   return isNumber(arr[index]);
 }
 
-function parseDice(s) {
+function parseDice(s, n) {
   var rerollOne;
   if (peek(s, 'hd') && peekIsNumber(s, 2)) {
     assertToken(s, 'h');
@@ -428,10 +474,23 @@ function parseDice(s) {
     return;
   }
 
-  var n = parseNumber(s);
-  var ret = new dice(n);
+  var dn = parseNumber(s, n);
+  var ret = new dice(dn);
   if (rerollOne)
     ret = ret.deleteFace(1).combine(ret);
+
+  if (peek(s, 'keep')) {
+    assertToken(s, 'keep');
+    if (peek(s, 'highest')) {
+      assertToken(s, 'highest');
+      ret.private.keep = keepN(parseNumber(s, n));
+    }
+    else {
+      assertToken(s, 'lowest');
+      ret.private.keep = keepN(parseNumber(s, n), true);
+    }
+  }
+
   return ret;
 }
 
@@ -454,7 +513,7 @@ function parseArgumentInternal(s, n) {
       return assertToken(s, ')', parseExpression(s, n));
     case 'h':
     case 'd':
-      return parseDice(s);
+      return parseDice(s, n);
     case '0':
     case '1':
     case '2':
@@ -477,12 +536,10 @@ function parseOperation(s) {
       return;
     // dc check
     case 'a':
-      assertToken(s, 'a');
-      assertToken(s, 'c');
+      assertToken(s, 'ac');
       return dice.prototype.ac;
     case 'd':
-      assertToken(s, 'd');
-      assertToken(s, 'c');
+      assertToken(s, 'dc');
       return dice.prototype.dc;
     case '>':
       assertToken(s, '>');
@@ -497,12 +554,7 @@ function parseOperation(s) {
       assertToken(s, '&');
       return dice.prototype.combine;
     case 'r':
-      assertToken(s, 'r');
-      assertToken(s, 'e');
-      assertToken(s, 'r');
-      assertToken(s, 'o');
-      assertToken(s, 'l');
-      assertToken(s, 'l');
+      assertToken(s, 'reroll');
       return dice.prototype.reroll;
     case '*':
       assertToken(s, '*');
@@ -511,6 +563,7 @@ function parseOperation(s) {
 }
 
 // console variables
+d3 = new dice(3);
 d4 = new dice(4);
 d6 = new dice(6);
 d8 = new dice(8);
