@@ -249,19 +249,19 @@ function parseExpression(arr, n) {
       critNormalize = crit.total() / critNormalize;
     }
 
-    var fail = arr.length && arr[0] == 'f';
-    if (fail) {
-      assertToken(arr, 'f');
+    var save = arr.length && arr[0] == 's';
+    if (save) {
+      assertToken(arr, 's');
       assertToken(arr, 'a');
-      assertToken(arr, 'i');
-      assertToken(arr, 'l');
-      fail = new dice(0);
+      assertToken(arr, 'v');
+      assertToken(arr, 'e');
+      save = new dice(0);
       var min = ret.minFace();
-      fail[min > 0 ? min : 1] = ret[min];
-      var failNormalize = fail.total();
+      save[min > 0 ? min : 1] = ret[min];
+      var saveNormalize = save.total();
       ret = ret.deleteFace(min);
-      fail = op.apply(fail, [parseBinaryArgument(arg, arr, n)]);
-      failNormalize = fail.total() / failNormalize;
+      save = op.apply(save, [parseBinaryArgument(arg, arr, n)]);
+      saveNormalize = save.total() / saveNormalize;
     }
 
     var normalize = ret.total();
@@ -274,11 +274,11 @@ function parseExpression(arr, n) {
       normalize *= critNormalize;
     }
 
-    if (fail) {
-      fail = fail.normalize(normalize);
-      ret = ret.normalize(failNormalize);
-      ret = ret.combine(fail);
-      normalize *= failNormalize;
+    if (save) {
+      save = save.normalize(normalize);
+      ret = ret.normalize(saveNormalize);
+      ret = ret.combine(save);
+      normalize *= saveNormalize;
     }
   }
   return ret;

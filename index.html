@@ -28,15 +28,20 @@
 
     <main role="main" class="container">
       <form id='form'>
-        <div class="form-group">
+        <div class="form-group" id='expressions'>
           <label for="expression">Enter Expression</label>
-          <input class="form-control" id="expression" placeholder="d20" value='d20'>
+          <input class='form-control expression' id='expression' placeholder='d20' value='d20'>
         </div>
 
         <div class="form-group">
         <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#advanced" aria-expanded="false" aria-controls="advanced" id='advanced-btn'>Advanced</button>
-      </div>
+        </div>
         <div class="collapse multi-collapse form-group" id='advanced'>
+          <div>
+          <button class="btn btn-info" type="button" id='add-btn'>Add</button>
+          </div>
+          <div id='adds'>
+          </div>
           <label for="iterate">iterate value "n"</label>
           <select class="form-control" id="iterate">
             <option>None</option>
@@ -84,8 +89,8 @@
           <small class="form-text text-muted">DC 15 check with 6 proficiency with 8d6 on hit (fireball)</small>
           <small class="form-text text-muted example">d20 + 6 DC 15 * 8d6</small>
           <br/>
-          <small class="form-text text-muted">DC 15 check with 6 proficiency with 8d6 on hit (fireball) and half damage on fail</small>
-          <small class="form-text text-muted example">d20 + 6 DC 15 * 8d6 fail half</small>
+          <small class="form-text text-muted">DC 15 check with 6 proficiency with 8d6 on hit (fireball) and half damage on save</small>
+          <small class="form-text text-muted example">d20 + 6 DC 15 * 8d6 save half</small>
           <br/>
           <small class="form-text text-muted">Attack Roll against Armor 15</small>
           <small class="form-text text-muted example">d20 + 6 AC 15</small>
