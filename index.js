@@ -1,34 +1,44 @@
 
 $(document).ready(function() {
+  $('#expression').val(Cookies.get('expression-0') || 'd20');
+
   google.charts.load('current', {'packages':['bar']});
 
   $('#advanced-btn').click(function() {
-    if ($('#advanced').is(':visible'))
-      $('#roll').show();
-    else {
-      $('#roll').hide();
-    }
+    // if ($('#advanced').is(':visible'))
+    //   $('#roll').show();
+    // else {
+    //   $('#roll').hide();
+    // }
   })
 
   $('#add-btn').click(function(e) {
-    $('#adds').prepend("<input class='form-control expression' id='expression' placeholder='d20' value='d20'>")
+    var add = $("<input class='form-control expression' id='expression' placeholder='d20'>");
+    add.val(Cookies.get('expression-' + $('#adds').length) || 'd20');
+    $('#adds').prepend(add);
   })
 
   $('#roll').click(function(e) {
     e.preventDefault()
-    var val = $('#expression').val();
     $('#results').text('');
 
-    val = parse(val, 0);
-    var roll = Math.floor(Math.random() * val.total());
-    for (var key of val.keys()) {
-      var num = val[key];
-      if (roll < num) {
-        $('#results').append($('<div></div>').text('Rolled: ' + key).addClass('form-text'))
-        break;
+    $('.expression').each(function(index, expression) {
+      if (!$('#advanced').is(':visible') && index > 0)
+        return;
+
+      var val = $(expression).val();
+      val = parse(val, 0);
+      var roll = Math.floor(Math.random() * val.total());
+      for (var key of val.keys()) {
+        var num = val[key];
+        if (roll < num) {
+          $('#results').append($('<div></div>').text('Rolled: ' + key).addClass('form-text'))
+          break;
+        }
+        roll -= num;
       }
-      roll -= num;
-    }
+    })
+
   });
 
   $('#form').submit(function(e) {
@@ -40,6 +50,7 @@ $(document).ready(function() {
         $(expression).remove();
         return;
       }
+      Cookies.set('expression-' + index, val);
     });
 
     var numExpressions = $('.expression').length;
