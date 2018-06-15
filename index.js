@@ -14,7 +14,7 @@ $(document).ready(function() {
 
   $('#add-btn').click(function(e) {
     var add = $("<input class='form-control expression' id='expression' placeholder='d20'>");
-    add.val(Cookies.get('expression-' + $('#adds').length) || 'd20');
+    add.val(Cookies.get('expression-' + $('.expression').length) || 'd20');
     $('#adds').prepend(add);
   })
 
