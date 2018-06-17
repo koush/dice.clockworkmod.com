@@ -40,10 +40,10 @@
                         <div class="input-group-text">Action</div>
                       </div>
                       <select class="form-control" id="action">
-                        <option value="{weapon-attack-modifier}({attack}({weapon-damage}{savage-attacker} + {weapon-damage-modifier}))">Attack</option>
-                        <option value="{weapon-attack-modifier}({attack}({weapon-damage}{savage-attacker} + {weapon-damage-modifier})) + ({attack}(d4 + {weapon-damage-modifier}))">Attack (with Polearm Master)</option>
-                        <option value="{attack}({weapon-damage} + {weapon-damage-modifier} + {cantrip-level-minus-one}d8 + ({cantrip-level-minus-one} * {spell-damage-modifier}) + {greenflame-jump})">Green Flame Blade</option>
-                        <option value="d20 + {spell-save-modifier} dc {spell-save-dc} * 8({fd}6) {save-damage}">Fireball</option>
+                        <option value="{weapon-attack-modifier}({attack}({weapon-damage} + {weapon-damage-modifier}))">Attack</option>
+                        <option value="{weapon-attack-modifier}({attack}({weapon-damage} + {weapon-damage-modifier})) + ({attack}(d4 + {weapon-damage-modifier}))">Attack (with Polearm Master)</option>
+                        <option value="{attack}({fire-spell}{weapon-damage} + {weapon-damage-modifier} + {cantrip-level-minus-one}({fd}8) + {greenflame-jump})">Green Flame Blade</option>
+                        <option value="d20 + {spell-save-modifier} dc {spell-save-dc} * ({fire-spell}8({fd}6)) save half">Fireball</option>
                       </select>
                     </div>
                   </div>
@@ -83,7 +83,7 @@
                       </div>
                       <select class="form-control">
                         <option value="0">No Second Target</option>
-                        <option value="{cantrip-level-minus-one}d8 + {spell-damage-modifier}">Hit Second Target</option>
+                        <option value="{cantrip-level-minus-one}({fd}8) + {spell-damage-modifier}">Hit Second Target</option>
                       </select>
                     </div>
                   </div>
@@ -156,6 +156,9 @@
                         <option value="d12">d12</option>
                         <option value="2d6">2d6</option>
                         <option value="2d8">2d8 - Shadow Blade</option>
+                        <option value="3d8">3d8 - Shadow Blade (3rd level)</option>
+                        <option value="4d8">4d8 - Shadow Blade (5th level)</option>
+                        <option value="5d8">5d8 - Shadow Blade (7th level)</option>
                         <!-- <option value="{dueling}">Fighting Style - Dueling</option> -->
                         <option value="{great-weapon-fighting}">Fighting Style - Great Weapon Fighting</option>
                       </select>
@@ -236,6 +239,16 @@
                         <option value="5">5</option>
                         <option value="6">6</option>
                         <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
                       </select>
                     </div>
                   </div>
@@ -406,6 +419,17 @@
                     </div>
                   </div>
 
+                  <div class="col-sm-10 builder builder-modifier builder-modifier-fire-spell">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Draconic Sorcerer Elemental Affinity (fire)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="">No</option>
+                        <option value="{spell-damage-modifier}">Yes</option>
+                      </select>
+                    </div>
+                  </div>
                 </div>
               </form>
 

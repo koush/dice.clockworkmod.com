@@ -15,12 +15,24 @@ $(document).ready(function() {
     var newExpression = expression;
     $(matches).each(function(i, match) {
       var matchVar = match.replaceAll("{", "").replace("}", "");
+
+      var modifierMatches = $('.builder-modifier-' + matchVar);
+      modifierMatches.show();
+      $(modifierMatches).each(function(i, builder) {
+        if (!variables[builder]) {
+          var builderVal = $(builder).find('.form-control').val();
+          variables[builder] = builderVal
+          if (builderVal.length)
+            newExpression = expression.replaceAll(match, match + builderVal + ' + ');
+        }
+      });
+
       var builderMatch = $('.builder-' + matchVar);
       builderMatch.show();
       if (!builderMatch.length)
         return;
       var builderVal = builderMatch.find('.form-control').val();
-      variables[match] = builderVal;
+      // variables[match] = builderVal;
       newExpression = newExpression.replaceAll(match, builderVal);
     })
 
@@ -33,7 +45,27 @@ $(document).ready(function() {
     $('.builder').hide();
     var expression = refreshbuilder($('#action').val(), {});
     var matches = expression.match(/{.*?}/g);
+
     $(matches).each(function(i, match) {
+      // // resolve modifiers
+      // var matchVar = match.replaceAll("{", "").replace("}", "");
+      // var builderMatches = $('.builder-modifier-' + matchVar);
+      // $(builderMatches).each(function(i, builder) {
+      //   var builderVal = $(builder).find('.form-control').val();
+      //   expression = expression.replaceAll(match, match + builderVal);
+      // });
+      //
+      // // resolve variables
+      // var builderMatch = $('.builder-' + matchVar);
+      // if (builderMatch.length) {
+      //   var builderVal = builderMatch.find('.form-control').val();
+      //   variables[match] = builderVal;
+      //   expression = expression.replaceAll(match, builderVal);
+      // }
+      // else {
+      //   console.error('unresolved', matchVar);
+      // }
+
       expression = expression.replaceAll(match, '');
     })
 
