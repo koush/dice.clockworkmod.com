@@ -43,7 +43,7 @@
                         <option value="{weapon-attack-modifier}({attack}({weapon-damage} + {weapon-damage-modifier}))">Attack</option>
                         <option value="{weapon-attack-modifier}({attack}({weapon-damage} + {weapon-damage-modifier})) + ({attack}(d4 + {weapon-damage-modifier}))">Attack (with Polearm Master)</option>
                         <option value="{attack}({fire-spell}{weapon-damage} + {weapon-damage-modifier} + {cantrip-level-minus-one}({fd}8) + {greenflame-jump})">Green Flame Blade</option>
-                        <option value="d20 + {spell-save-modifier} dc {spell-save-dc} * ({fire-spell}8({fd}6)) save half">Fireball</option>
+                        <option value="{spell-save} * ({fire-spell}8({fd}6)) save half">Fireball</option>
                       </select>
                     </div>
                   </div>
@@ -91,13 +91,13 @@
                   <div class="col-sm-10 builder builder-weapon-attack-modifier">
                     <div class="input-group mb-2">
                       <div class="input-group-prepend">
-                        <div class="input-group-text">Extra Attack</div>
+                        <div class="input-group-text">Attack Modifier</div>
                       </div>
                       <select class="form-control">
                         <option value="">None</option>
                         <option value="2kh1">Savage Attacker</option>
-                        <option value="extra-attack">Extra Attack</option>
-                        <option value="extra-attack-savage-attacker">Extra Attack with Savage Attacker</option>
+                        <option value="{extra-attack}">Extra Attack</option>
+                        <option value="{extra-attack-savage-attacker}">Extra Attack with Savage Attacker</option>
                       </select>
                     </div>
                   </div>
@@ -108,7 +108,6 @@
                         <div class="input-group-text">Extra Attack</div>
                       </div>
                       <select class="form-control">
-                        <option value="1">None</option>
                         <option value="2">1</option>
                         <option value="3">2</option>
                         <option value="4">3</option>
@@ -125,20 +124,6 @@
                         <option value="3kh2">1</option>
                         <option value="4kh3">2</option>
                         <option value="5kh4">3</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div class="col-sm-10 builder builder-extra-attack">
-                    <div class="input-group mb-2">
-                      <div class="input-group-prepend">
-                        <div class="input-group-text">Extra Attack</div>
-                      </div>
-                      <select class="form-control">
-                        <option value="1">None</option>
-                        <option value="2">1</option>
-                        <option value="3">2</option>
-                        <option value="4">3</option>
                       </select>
                     </div>
                   </div>
@@ -224,31 +209,45 @@
                     </div>
                   </div>
 
-
-                  <div class="col-sm-10 builder builder-spell-damage-modifier">
+                  <div class="col-sm-10 builder builder-spell-save">
                     <div class="input-group mb-2">
                       <div class="input-group-prepend">
-                        <div class="input-group-text">Spell Damage Modifier</div>
+                        <div class="input-group-text">Spell Save DC</div>
                       </div>
                       <select class="form-control">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
+                        <option value="d0 dc 1">Always Fail</option>
+                        <option value="d1 dc 0">Always Save</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 8">8</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 9">9</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 10">10</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 11">11</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 12">12</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 13">13</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 14">14</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 15">15</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 16">16</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 17">17</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 18">18</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 19">19</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 20">20</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 21">21</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 22">22</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 23">23</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 24">24</option>
+                        <option value="{saving-throw-roll} + {spell-save-modifier} dc 25">25</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-saving-throw-roll">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Saving Throw Roll</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="{d20}">Normal</option>
+                        <option value="{d20} > {d20}">Advantage</option>
+                        <option value="{d20} < {d20}">Disadvantage</option>
                       </select>
                     </div>
                   </div>
@@ -271,37 +270,6 @@
                     </div>
                   </div>
 
-                  <div class="col-sm-10 builder builder-spell-save-dc">
-                    <div class="input-group mb-2">
-                      <div class="input-group-prepend">
-                        <div class="input-group-text">Spell Save DC</div>
-                      </div>
-                      <select class="form-control">
-                        <option value="99">Always Fail</option>
-                        <option value="0">Always Save</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                        <option value="11">11</option>
-                        <option value="12">12</option>
-                        <option value="13">13</option>
-                        <option value="14">14</option>
-                        <option value="15">15</option>
-                        <option value="16">16</option>
-                        <option value="17">17</option>
-                        <option value="18">18</option>
-                        <option value="19">19</option>
-                        <option value="20">20</option>
-                        <option value="21">21</option>
-                        <option value="22">22</option>
-                        <option value="23">23</option>
-                        <option value="24">24</option>
-                        <option value="25">25</option>
-                      </select>
-                    </div>
-                  </div>
-
-
                   <div class="col-sm-10 builder builder-save-damage">
                     <div class="input-group mb-2">
                       <div class="input-group-prepend">
@@ -318,11 +286,28 @@
                   <div class="col-sm-10 builder builder-attack">
                     <div class="input-group mb-2">
                       <div class="input-group-prepend">
-                        <div class="input-group-text">Attack AC</div>
+                        <div class="input-group-text">Attack Armor Class (AC)</div>
                       </div>
                       <select class="form-control">
                         <option value="">Always Hit</option>
-                        <option value="({attack-roll} + {attack-modifier}) AC {armor-class} * ">Attack against AC</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 8 * ">8</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 9 * ">9</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 10 * ">10</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 11 * ">11</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 12 * ">12</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 13 * ">13</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 14 * ">14</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 15 * ">15</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 16 * ">16</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 17 * ">17</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 18 * ">18</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 19 * ">19</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 20 * ">20</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 21 * ">21</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 22 * ">22</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 23 * ">23</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 24 * ">24</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC 25 * ">25</option>
                       </select>
                     </div>
                   </div>
@@ -430,7 +415,35 @@
                       </select>
                     </div>
                   </div>
+
+                  <div class="col-sm-10 builder builder-spell-damage-modifier">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Spell Damage Modifier</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                      </select>
+                    </div>
                 </div>
+
               </form>
 
             </div>
