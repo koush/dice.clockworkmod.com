@@ -541,7 +541,10 @@ function parseArgumentInternal(s, n) {
   switch (c) {
     case '(':
       s.shift();
-      return assertToken(s, ')', parseExpression(s, n));
+      var ret = parseExpression(s, n);
+      if (s.length)
+        return assertToken(s, ')', ret);
+      return ret;
     case 'h':
     case 'd':
       return parseDice(s, n);

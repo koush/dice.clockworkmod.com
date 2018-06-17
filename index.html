@@ -40,9 +40,10 @@
                         <div class="input-group-text">Action</div>
                       </div>
                       <select class="form-control" id="action">
-                        <option value="{extra-attack}({attack}({weapon-damage}{savage-attacker} + {weapon-damage-modifier} {weapon-hit})) {weapon-hit-per-turn}">Attack</option>
+                        <option value="{extra-attack}({attack}({weapon-damage}{savage-attacker} + {weapon-damage-modifier}))">Attack</option>
+                        <option value="{extra-attack}({attack}({weapon-damage}{savage-attacker} + {weapon-damage-modifier})) + ({attack}(d4 + {weapon-damage-modifier}))">Attack (with Polearm Master)</option>
                         <option value="{attack}({weapon-damage} + {weapon-damage-modifier} + {cantrip-level-minus-one}d8 + ({cantrip-level-minus-one} * {spell-damage-modifier}) + {greenflame-jump})">Green Flame Blade</option>
-                        <option value="d20 + {spell-save-modifier} dc {spell-save-dc} * 8d6 {save-damage}">Fireball</option>
+                        <option value="d20 + {spell-save-modifier} dc {spell-save-dc} * 8({fd}6) {save-damage}">Fireball</option>
                       </select>
                     </div>
                   </div>
@@ -93,10 +94,10 @@
                         <div class="input-group-text">Extra Attack</div>
                       </div>
                       <select class="form-control">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
+                        <option value="1">None</option>
+                        <option value="2">1</option>
+                        <option value="3">2</option>
+                        <option value="4">3</option>
                       </select>
                     </div>
                   </div>
@@ -114,7 +115,7 @@
                         <option value="d12">d12</option>
                         <option value="2d6">2d6</option>
                         <option value="2d8">2d8 - Shadow Blade</option>
-                        <option value="{dueling}">Fighting Style - Dueling</option>
+                        <!-- <option value="{dueling}">Fighting Style - Dueling</option> -->
                         <option value="{great-weapon-fighting}">Fighting Style - Great Weapon Fighting</option>
                       </select>
                     </div>
@@ -130,6 +131,7 @@
                         <option value="d4+2">d4</option>
                         <option value="d6+2">d6</option>
                         <option value="d8+2">d8</option>
+                        <option value="d8+2">d8</option>
                       </select>
                     </div>
                   </div>
@@ -142,9 +144,9 @@
                       </div>
                       <select class="form-control">
                         <option value="2(d6 reroll d2)">2d6</option>
-                        <option value="d8 reroll d2">d8</option>
-                        <option value="d10 reroll d2">d10</option>
-                        <option value="d12  reroll d2">d12</option>
+                        <option value="(d8 reroll d2)">d8</option>
+                        <option value="(d10 reroll d2)">d10</option>
+                        <option value="(d12  reroll d2)">d12</option>
                       </select>
                     </div>
                   </div>
@@ -164,6 +166,16 @@
                         <option value="5">5</option>
                         <option value="6">6</option>
                         <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
                       </select>
                     </div>
                   </div>
@@ -353,6 +365,18 @@
                     </div>
                   </div>
 
+
+                  <div class="col-sm-10 builder builder-fd">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Elemental Adept (fire)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="d">No</option>
+                        <option value="2>d">Yes</option>
+                      </select>
+                    </div>
+                  </div>
 
                 </div>
               </form>
