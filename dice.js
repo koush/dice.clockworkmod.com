@@ -510,18 +510,6 @@ function parseDice(s, n) {
   if (rerollOne)
     ret = ret.deleteFace(1).combine(ret);
 
-  if (peek(s, 'keep')) {
-    assertToken(s, 'keep');
-    if (peek(s, 'highest')) {
-      assertToken(s, 'highest');
-      ret.private.keep = keepN(parseNumber(s, n));
-    }
-    else {
-      assertToken(s, 'lowest');
-      ret.private.keep = keepN(parseNumber(s, n), true);
-    }
-  }
-
   return ret;
 }
 
@@ -534,6 +522,25 @@ function parseArgument(s, n) {
   return ret;
 }
 
+function parseKeep(s, n) {
+  var lowest;
+  if (lowest = peek(s, 'l')) {
+    assertToken(s, 'l');
+  }
+  else if (peek(s, 'h')) {
+    assertToken(s, 'h');
+  }
+  else {
+    return;
+  }
+
+  var keepNumber = parseNumber(s, n);
+
+  var ret = parseArgumentInternal(s, n);
+  ret.private.keep = keepN(keepNumber, lowest);
+  return ret;
+}
+
 function parseArgumentInternal(s, n) {
   if (!s.length)
     return;
@@ -541,13 +548,13 @@ function parseArgumentInternal(s, n) {
   switch (c) {
     case '(':
       s.shift();
-      var ret = parseExpression(s, n);
-      if (s.length)
-        return assertToken(s, ')', ret);
-      return ret;
+      return assertToken(s, ')', parseExpression(s, n));
     case 'h':
     case 'd':
       return parseDice(s, n);
+    case 'k':
+      assertToken(s, 'k');
+      return parseKeep(s, n);
     case '0':
     case '1':
     case '2':

@@ -40,8 +40,8 @@
                         <div class="input-group-text">Action</div>
                       </div>
                       <select class="form-control" id="action">
-                        <option value="{extra-attack}({attack}({weapon-damage}{savage-attacker} + {weapon-damage-modifier}))">Attack</option>
-                        <option value="{extra-attack}({attack}({weapon-damage}{savage-attacker} + {weapon-damage-modifier})) + ({attack}(d4 + {weapon-damage-modifier}))">Attack (with Polearm Master)</option>
+                        <option value="{weapon-attack-modifier}({attack}({weapon-damage}{savage-attacker} + {weapon-damage-modifier}))">Attack</option>
+                        <option value="{weapon-attack-modifier}({attack}({weapon-damage}{savage-attacker} + {weapon-damage-modifier})) + ({attack}(d4 + {weapon-damage-modifier}))">Attack (with Polearm Master)</option>
                         <option value="{attack}({weapon-damage} + {weapon-damage-modifier} + {cantrip-level-minus-one}d8 + ({cantrip-level-minus-one} * {spell-damage-modifier}) + {greenflame-jump})">Green Flame Blade</option>
                         <option value="d20 + {spell-save-modifier} dc {spell-save-dc} * 8({fd}6) {save-damage}">Fireball</option>
                       </select>
@@ -84,6 +84,47 @@
                       <select class="form-control">
                         <option value="0">No Second Target</option>
                         <option value="{cantrip-level-minus-one}d8 + {spell-damage-modifier}">Hit Second Target</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-weapon-attack-modifier">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Extra Attack</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="">None</option>
+                        <option value="2kh1">Savage Attacker</option>
+                        <option value="extra-attack">Extra Attack</option>
+                        <option value="extra-attack-savage-attacker">Extra Attack with Savage Attacker</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-extra-attack">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Extra Attack</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="1">None</option>
+                        <option value="2">1</option>
+                        <option value="3">2</option>
+                        <option value="4">3</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-extra-attack-savage-attacker">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Extra Attack</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="3kh2">1</option>
+                        <option value="4kh3">2</option>
+                        <option value="5kh4">3</option>
                       </select>
                     </div>
                   </div>
@@ -353,19 +394,6 @@
                     </div>
                   </div>
 
-                  <div class="col-sm-10 builder builder-savage-attacker">
-                    <div class="input-group mb-2">
-                      <div class="input-group-prepend">
-                        <div class="input-group-text">Savage Attacker</div>
-                      </div>
-                      <select class="form-control">
-                        <option value="">No</option>
-                        <option value="!">Yes</option>
-                      </select>
-                    </div>
-                  </div>
-
-
                   <div class="col-sm-10 builder builder-fd">
                     <div class="input-group mb-2">
                       <div class="input-group-prepend">
@@ -454,7 +482,7 @@
           <small class="form-text text-muted example">d20 < d20</small>
           <br/>
           <small class="form-text text-muted">Roll 4d6 and keep the highest 3 rolls (common character ability roll)</small>
-          <small class="form-text text-muted example">4d6 keep highest 3</small>
+          <small class="form-text text-muted example">4kh3d6</small>
           <br/>
           <small class="form-text text-muted">DC 15 check with 6 proficiency</small>
           <small class="form-text text-muted example">d20 + 6 DC 15</small>
