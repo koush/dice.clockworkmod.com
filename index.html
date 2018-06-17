@@ -20,6 +20,352 @@
   </head>
 
   <body>
+    <div id='site-wrapper'>
+      <div class="modal fade"  id="builder-modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Expression Builder</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+
+              <form>
+                <div class="form-row align-items-center">
+                  <div class="col-sm-10">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Action</div>
+                      </div>
+                      <select class="form-control" id="action">
+                        <option value="{extra-attack}({attack}({weapon-damage}{savage-attacker} + {weapon-damage-modifier} {weapon-hit})) {weapon-hit-per-turn}">Attack</option>
+                        <option value="{attack}({weapon-damage} + {weapon-damage-modifier} + {cantrip-level-minus-one}d8 + ({cantrip-level-minus-one} * {spell-damage-modifier}) + {greenflame-jump})">Green Flame Blade</option>
+                        <option value="d20 + {spell-save-modifier} dc {spell-save-dc} * 8d6 {save-damage}">Fireball</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-cantrip-level">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Cantrip Level</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-cantrip-level-minus-one">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Cantrip Level</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="0">1</option>
+                        <option value="1">2</option>
+                        <option value="2">3</option>
+                        <option value="3">4</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-greenflame-jump">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Green Flame Blade Jump</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="0">No Second Target</option>
+                        <option value="{cantrip-level-minus-one}d8 + {spell-damage-modifier}">Hit Second Target</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-extra-attack">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Extra Attack</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-weapon-damage">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Weapon Damage</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="d4">d4</option>
+                        <option value="d6">d6</option>
+                        <option value="d8">d8</option>
+                        <option value="d10">d10</option>
+                        <option value="d12">d12</option>
+                        <option value="2d6">2d6</option>
+                        <option value="2d8">2d8 - Shadow Blade</option>
+                        <option value="{dueling}">Fighting Style - Dueling</option>
+                        <option value="{great-weapon-fighting}">Fighting Style - Great Weapon Fighting</option>
+                      </select>
+                    </div>
+                  </div>
+
+
+                  <div class="col-sm-10 builder builder-dueling">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Dueling</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="d4+2">d4</option>
+                        <option value="d6+2">d6</option>
+                        <option value="d8+2">d8</option>
+                      </select>
+                    </div>
+                  </div>
+
+
+                  <div class="col-sm-10 builder builder-great-weapon-fighting">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Great Weapon</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="2(d6 reroll d2)">2d6</option>
+                        <option value="d8 reroll d2">d8</option>
+                        <option value="d10 reroll d2">d10</option>
+                        <option value="d12  reroll d2">d12</option>
+                      </select>
+                    </div>
+                  </div>
+
+
+                  <div class="col-sm-10 builder builder-weapon-damage-modifier">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Weapon Damage Modifier</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                      </select>
+                    </div>
+                  </div>
+
+
+                  <div class="col-sm-10 builder builder-spell-damage-modifier">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Spell Damage Modifier</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-spell-save-modifier">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Spell Save Modifier</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-spell-save-dc">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Spell Save DC</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="99">Always Fail</option>
+                        <option value="0">Always Save</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                      </select>
+                    </div>
+                  </div>
+
+
+                  <div class="col-sm-10 builder builder-save-damage">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Spell Save Damage</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="save half">Half</option>
+                        <option value="">None</option>
+                      </select>
+                    </div>
+                  </div>
+
+
+                  <div class="col-sm-10 builder builder-attack">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Attack AC</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="">Always Hit</option>
+                        <option value="({attack-roll} + {attack-modifier}) AC {armor-class} * ">Attack against AC</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-d20">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">D20</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="d20">Normal</option>
+                        <option value="hd20">Halfling Luck</option>
+                      </select>
+                    </div>
+                  </div>
+
+
+
+                  <div class="col-sm-10 builder builder-attack-roll">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Attack Roll</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="{d20}">Normal</option>
+                        <option value="{d20} > {d20}">Advantage</option>
+                        <option value="{d20} < {d20}">Disadvantage</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-attack-modifier">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Attack Modifier</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-armor-class">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Armor Class (AC)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                        <option value="11">11</option>
+                        <option value="12">12</option>
+                        <option value="13">13</option>
+                        <option value="14">14</option>
+                        <option value="15">15</option>
+                        <option value="16">16</option>
+                        <option value="17">17</option>
+                        <option value="18">18</option>
+                        <option value="19">19</option>
+                        <option value="20">20</option>
+                        <option value="21">21</option>
+                        <option value="22">22</option>
+                        <option value="23">23</option>
+                        <option value="24">24</option>
+                        <option value="25">25</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-savage-attacker">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Savage Attacker</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="">No</option>
+                        <option value="!">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+
+
+                </div>
+              </form>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="jumbotron">
       <h1 class="display-3">Dice!</h1>
       <p class="lead">This is a dice calculator for tabletop games.</p>
@@ -35,7 +381,8 @@
         </div>
 
         <div class="form-group">
-        <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#advanced" aria-expanded="false" aria-controls="advanced" id='advanced-btn'>Advanced</button>
+          <button class="btn btn-sm btn-secondary" type="button" id='builder-btn'>Builder</button>
+          <button class="btn btn-sm btn-secondary" type="button" data-toggle="collapse" data-target="#advanced" aria-expanded="false" aria-controls="advanced" id='advanced-btn'>Advanced</button>
         </div>
         <div class="collapse multi-collapse form-group" id='advanced'>
           <div>
@@ -77,6 +424,7 @@
           <br/>
           <small class="form-text text-muted">Choose the greater of two d20 rolls (advantage)</small>
           <small class="form-text text-muted example">d20 > d20</small>
+          <small class="form-text text-muted example">d20!</small>
           <br/>
           <small class="form-text text-muted">Choose the lesser of two d20 rolls (disadvantage)</small>
           <small class="form-text text-muted example">d20 < d20</small>

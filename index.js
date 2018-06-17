@@ -1,15 +1,53 @@
+String.prototype.replaceAll = function(search, replacement) {
+    var target = this;
+    return target.replace(new RegExp(search, 'g'), replacement);
+};
 
 $(document).ready(function() {
   $('#expression').val(Cookies.get('expression-0') || 'd20');
 
   google.charts.load('current', {'packages':['bar']});
 
-  $('#advanced-btn').click(function() {
-    // if ($('#advanced').is(':visible'))
-    //   $('#roll').show();
-    // else {
-    //   $('#roll').hide();
-    // }
+  function refreshbuilder(expression, variables) {
+    var templates = {};
+    var matches = expression.match(/{.*?}/g);
+
+    var newExpression = expression;
+    $(matches).each(function(i, match) {
+      var matchVar = match.replaceAll("{", "").replace("}", "");
+      var builderMatch = $('.builder-' + matchVar);
+      builderMatch.show();
+      if (!builderMatch.length)
+        return;
+      var builderVal = builderMatch.find('.form-control').val();
+      variables[match] = builderVal;
+      newExpression = newExpression.replaceAll(match, builderVal);
+    })
+
+    if (newExpression != expression)
+      return refreshbuilder(newExpression, variables)
+    return expression;
+  }
+
+  function refresh() {
+    $('.builder').hide();
+    var expression = refreshbuilder($('#action').val(), {});
+    var matches = expression.match(/{.*?}/g);
+    $(matches).each(function(i, match) {
+      expression = expression.replaceAll(match, '');
+    })
+
+    $('#expression').val(expression);
+    $('#form').submit();
+  }
+
+  $('.builder').find('.form-control').change(refresh);
+  $('#action').change(refresh);
+
+  $('#builder-btn').click(function() {
+    refresh();
+
+    $('#builder-modal').modal()
   })
 
   $('#add-btn').click(function(e) {
@@ -42,7 +80,8 @@ $(document).ready(function() {
   });
 
   $('#form').submit(function(e) {
-    e.preventDefault()
+    if (e)
+      e.preventDefault()
 
     $('.expression').each(function(index, expression) {
       var val = $(expression).val();

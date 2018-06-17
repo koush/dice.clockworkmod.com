@@ -3,6 +3,8 @@ function dice(x) {
     this[i] = 1;
   }
 
+  if (x == 0)
+    this[0] = 1;
 
   Object.defineProperty(this, "private", {
       enumerable: false,
@@ -67,17 +69,17 @@ dice.prototype.increment = function(val, count) {
 }
 
 dice.prototype.normalize = function(scalar) {
-  var ret = Object.assign(new dice(0), this);
+  var ret = Object.assign(new dice(), this);
   for (var key of ret.keys()) {
     ret[key] *= scalar;
   }
   return ret;
 }
 
-function dfunc(name, f) {
+function dfunc(name, f, diceConstructor) {
   dice.prototype[name] = function(d) {
     var scalar = d.constructor.name == 'Number';
-    var ret = new dice(0);
+    var ret = diceConstructor ? diceConstructor() : new dice();
     var numbers = this.keys();
     for (var key of numbers) {
       if (scalar) {
@@ -102,6 +104,12 @@ dfunc('add', function(a, b) {
   return a + b;
 })
 
+dfunc('addNonZero', function(a, b) {
+  if (a != 0)
+    return a + b;
+  return a;
+})
+
 dfunc('subtract', function(a, b) {
   return a - b;
 })
@@ -111,7 +119,7 @@ dfunc('multiply', function(a, b) {
 })
 
 dice.prototype.changeFace = function(old, n) {
-  var ret = Object.assign(new dice(0), this);
+  var ret = Object.assign(new dice(), this);
 
   if (old in ret) {
     var v = ret[old];
@@ -122,7 +130,7 @@ dice.prototype.changeFace = function(old, n) {
 }
 
 dice.prototype.deleteFace = function(n) {
-  var ret = Object.assign(new dice(0), this);
+  var ret = Object.assign(new dice(), this);
   delete ret[n];
   return ret;
 }
@@ -131,7 +139,7 @@ dice.prototype.reroll = function(d) {
   if (d.constructor.name == 'Number')
     d = scalarDice(d);
 
-  var ret = Object.assign(new dice(0), this);
+  var ret = Object.assign(new dice(), this);
 
   var numbers = d.keys();
   for (var face of numbers) {
@@ -145,6 +153,11 @@ dfunc('max', function(a, b) {
   return Math.max(a, b);
 })
 
+dfunc('advantage', function(a, b) {
+  return Math.max(a, b);
+})
+dice.prototype.advantage.unary = true;
+
 dfunc('min', function(a, b) {
   return Math.min(a, b);
 })
@@ -153,11 +166,24 @@ dfunc('ge', function(a, b) {
   return (a >= b) ? 0 : 1;
 })
 
-dice.prototype.dc = dice.prototype.ge;
+
+dfunc('dc', function(a, b) {
+  return (a >= b) ? 0 : 1;
+}, function() {
+  var ret = new dice();
+  ret[0] = 0;
+  ret[1] = 0;
+  return ret;
+})
 
 dfunc('ac', function(a, b) {
   return (a >= b) ? a : 0;
-})
+}, function() {
+  var ret = new dice();
+  ret[0] = 0;
+  ret[1] = 0;
+  return ret;
+});
 
 dfunc('divide', function(a, b) {
   return a / b;
@@ -172,7 +198,7 @@ dfunc('and', function(a, b) {
 })
 
 dice.prototype.percent = function() {
-  var ret = new dice(0);
+  var ret = new dice();
   var total = this.total();
   for (var key of this.keys()) {
     ret[key] = this[key] / total;
@@ -190,8 +216,8 @@ dice.prototype.average = function() {
 }
 
 dice.prototype.combine = function(d) {
-  var ret = Object.assign(new dice(0), d);
-  var except = Object.assign(new dice(0), d);
+  var ret = Object.assign(new dice(), d);
+  var except = Object.assign(new dice(), d);
   for (var key of this.keys()) {
     ret.increment(key, this[key]);
     delete except[key];
@@ -232,7 +258,11 @@ function parseExpression(arr, n) {
 
   var op;
   while ((op = parseOperation(arr)) != null) {
-    var arg = parseArgument(arr, n);
+    var arg;
+    if (!op.unary)
+      arg = parseArgument(arr, n);
+    else
+      arg = ret;
     // crit
     var crit = arr.length && arr[0] == 'c';
     if (crit) {
@@ -240,13 +270,13 @@ function parseExpression(arr, n) {
       assertToken(arr, 'r');
       assertToken(arr, 'i');
       assertToken(arr, 't');
-      crit = new dice(0);
+      crit = new dice();
       var max = ret.maxFace();
       crit[max] = ret[max];
       var critNormalize = crit.total();
       ret = ret.deleteFace(max);
       crit = op.apply(crit, [parseBinaryArgument(arg, arr, n)]);
-      critNormalize = crit.total() / critNormalize;
+      critNormalize = critNormalize ? crit.total() / critNormalize : 1;
     }
 
     var save = arr.length && arr[0] == 's';
@@ -255,18 +285,19 @@ function parseExpression(arr, n) {
       assertToken(arr, 'a');
       assertToken(arr, 'v');
       assertToken(arr, 'e');
-      save = new dice(0);
+      save = new dice();
       var min = ret.minFace();
+      // make the face non zero for * operation
       save[min > 0 ? min : 1] = ret[min];
       var saveNormalize = save.total();
       ret = ret.deleteFace(min);
       save = op.apply(save, [parseBinaryArgument(arg, arr, n)]);
-      saveNormalize = save.total() / saveNormalize;
+      saveNormalize = saveNormalize ? save.total() / saveNormalize : 1;
     }
 
     var normalize = ret.total();
     ret = op.apply(ret, [arg]);
-    normalize = ret.total() / normalize;
+    normalize = normalize ? ret.total() / normalize : 1;
     if (crit) {
       crit = crit.normalize(normalize);
       ret = ret.normalize(critNormalize);
@@ -326,7 +357,7 @@ function opDiceInternal(d, ret, i, collect, freq, f) {
 }
 
 function opDice(d, f) {
-  return opDiceInternal(d, new dice(0), 0, [], 1, f);
+  return opDiceInternal(d, new dice(), 0, [], 1, f);
 }
 
 function keepN(n, low) {
@@ -358,7 +389,7 @@ function multiplyDice(n, d) {
 }
 
 function scalarDice(n) {
-  var ret = new dice(0);
+  var ret = new dice();
   ret[n] = 1;
   return ret;
 }
@@ -370,7 +401,7 @@ function multiplyDiceByDice(dice1, dice2) {
     dice2 = scalarDice(dice2);
 
 
-  var ret = new dice(0);
+  var ret = new dice();
   var faces = {};
   var numbers = dice1.keys();
   var faceNormalize = 1;
@@ -541,6 +572,9 @@ function parseOperation(s) {
     case 'd':
       assertToken(s, 'dc');
       return dice.prototype.dc;
+    case '!':
+      assertToken(s, '!');
+      return dice.prototype.advantage;
     case '>':
       assertToken(s, '>');
       return dice.prototype.max;
@@ -550,6 +584,13 @@ function parseOperation(s) {
     case '+':
       assertToken(s, '+');
       return dice.prototype.add;
+    case '~':
+      assertToken(s, '~');
+      assertToken(s, '+');
+      return dice.prototype.addNonZero;
+    case '-':
+      assertToken(s, '-');
+      return dice.prototype.subtract;
     case '&':
       assertToken(s, '&');
       return dice.prototype.combine;
