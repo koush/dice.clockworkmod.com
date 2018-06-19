@@ -42,8 +42,30 @@
                       <select class="form-control" id="action">
                         <option value="{weapon-attack-modifier}({attack}({weapon-damage} + {weapon-damage-modifier}))">Attack</option>
                         <option value="{weapon-attack-modifier}({attack}({weapon-damage} + {weapon-damage-modifier})) + ({attack}(d4 + {weapon-damage-modifier}))">Attack (with Polearm Master)</option>
-                        <option value="{attack}({fire-spell}{weapon-damage} + {weapon-damage-modifier} + {cantrip-level-minus-one}({fd}8) + {greenflame-jump})">Green Flame Blade</option>
-                        <option value="{spell-save} * ({fire-spell}8({fd}6)) save half">Fireball</option>
+                        <option value="{spell-save} * 3({fd}8)">Aganazzar’s Scorcher</option>
+                        <option value="{spell-save} * 10d6+40">Disintegrate</option>
+                        <option value="{spell-save} * 3d8 save half">Dissonant Whispers</option>
+                        <option value="{spell-save} * (3({element-dice}6)) save half">Dragon's Breath</option>
+                        <option value="{attack} ({cantrip-level}({fd}10))">Fire Bolt</option>
+                        <option value="{attack} ({weapon-damage} + {weapon-damage-modifier} + {cantrip-level-minus-one}({fd}8) + {greenflame-jump})">Green Flame Blade</option>
+                        <option value="{spell-save} * (8({fd}6)) save half">Fireball</option>
+                        <option value="3(d4 + 1)">Magic Missile</option>
+                        <option value="3({attack} 2({fd}6))">Scorching Ray</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-element-dice">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Element</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="{ad}">Acid</option>
+                        <option value="{cd}">Cold</option>
+                        <option value="{fd}">Fire</option>
+                        <option value="{ld}">Lightning</option>
+                        <option value="{pd}">Poison</option>
                       </select>
                     </div>
                   </div>
@@ -392,6 +414,30 @@
                     </div>
                   </div>
 
+                  <div class="col-sm-10 builder builder-ad">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Elemental Adept (acid)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="d">No</option>
+                        <option value="2>d">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-cd">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Elemental Adept (cold)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="d">No</option>
+                        <option value="2>d">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+
                   <div class="col-sm-10 builder builder-fd">
                     <div class="input-group mb-2">
                       <div class="input-group-prepend">
@@ -404,7 +450,55 @@
                     </div>
                   </div>
 
-                  <div class="col-sm-10 builder builder-modifier builder-modifier-fire-spell">
+                  <div class="col-sm-10 builder builder-ld">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Elemental Adept (lightning)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="d">No</option>
+                        <option value="2>d">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-pd">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Elemental Adept (poison)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="d">No</option>
+                        <option value="2>d">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-modifier builder-modifier-ad">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Draconic Sorcerer Elemental Affinity (acid)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="">No</option>
+                        <option value="{spell-damage-modifier}">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-modifier builder-modifier-cd">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Draconic Sorcerer Elemental Affinity (cold)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="">No</option>
+                        <option value="{spell-damage-modifier}">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-modifier builder-modifier-fd">
                     <div class="input-group mb-2">
                       <div class="input-group-prepend">
                         <div class="input-group-text">Draconic Sorcerer Elemental Affinity (fire)</div>
@@ -412,6 +506,50 @@
                       <select class="form-control">
                         <option value="">No</option>
                         <option value="{spell-damage-modifier}">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-modifier builder-modifier-ld">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Draconic Sorcerer Elemental Affinity (lightning)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="">No</option>
+                        <option value="{spell-damage-modifier}">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-modifier builder-modifier-pd">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Draconic Sorcerer Elemental Affinity (poison)</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="">No</option>
+                        <option value="{spell-damage-modifier}">Yes</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-10 builder builder-modifier builder-modifier-weapon-damage">
+                    <div class="input-group mb-2">
+                      <div class="input-group-prepend">
+                        <div class="input-group-text">Sneak Attack</div>
+                      </div>
+                      <select class="form-control">
+                        <option value="">No</option>
+                        <option value="2d6">2d6</option>
+                        <option value="3d6">3d6</option>
+                        <option value="4d6">4d6</option>
+                        <option value="5d6">5d6</option>
+                        <option value="6d6">6d6</option>
+                        <option value="7d6">7d6</option>
+                        <option value="8d6">8d6</option>
+                        <option value="9d6">9d6</option>
+                        <option value="10d6">10d6</option>
                       </select>
                     </div>
                   </div>

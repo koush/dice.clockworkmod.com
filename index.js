@@ -22,8 +22,10 @@ $(document).ready(function() {
         if (!variables[builder]) {
           var builderVal = $(builder).find('.form-control').val();
           variables[builder] = builderVal
+          // if (builderVal.length)
+          //   newExpression = expression.replaceAll(match, match + builderVal + ' + ');
           if (builderVal.length)
-            newExpression = expression.replaceAll(match, match + builderVal + ' + ');
+            newExpression = expression + " + " + builderVal;
         }
       });
 

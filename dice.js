@@ -593,11 +593,11 @@ function parseOperation(s) {
       return dice.prototype.min;
     case '+':
       assertToken(s, '+');
-      return dice.prototype.add;
+      return dice.prototype.addNonZero;
     case '~':
       assertToken(s, '~');
       assertToken(s, '+');
-      return dice.prototype.addNonZero;
+      return dice.prototype.add;
     case '-':
       assertToken(s, '-');
       return dice.prototype.subtract;
