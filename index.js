@@ -143,7 +143,11 @@ $(document).ready(function() {
     var genRows = function() {
       rows = ['value'];
       for (var j = 0; j < numExpressions; j++) {
-        rows.push($($('.expression')[j]).val());
+        var val = $($('.expression')[j]).val()
+        if (!$('#advanced').is(':visible') || !parseInt($('#iterate').val())) {
+          val = '' + parse(val, 0).average() + ': '+ val;;
+        }
+        rows.push(val);
       }
       rows = [rows];
       $.each(internalRows, function(k, v) {

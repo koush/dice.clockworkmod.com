@@ -264,17 +264,34 @@ function parseExpression(arr, n) {
     else
       arg = ret;
     // crit
-    var crit = arr.length && arr[0] == 'c';
+    var xcrit = arr.length && arr[0] == 'x';
+    var crit;
+    if (xcrit) {
+      assertToken(arr, 'x');
+      crit = true;
+    }
+    else {
+      crit = arr.length && arr[0] == 'c';
+    }
     if (crit) {
       assertToken(arr, 'c');
       assertToken(arr, 'r');
       assertToken(arr, 'i');
       assertToken(arr, 't');
+      if (xcrit) {
+        xcrit = parseNumber(arr);
+        console.log(xcrit);
+      }
+      else {
+        xcrit = 1;
+      }
       crit = new dice();
-      var max = ret.maxFace();
-      crit[max] = ret[max];
+      for (var i = 0; i < xcrit; i++) {
+        var max = ret.maxFace();
+        crit[max] = ret[max];
+        ret = ret.deleteFace(max);
+      }
       var critNormalize = crit.total();
-      ret = ret.deleteFace(max);
       crit = op.apply(crit, [parseBinaryArgument(arg, arr, n)]);
       critNormalize = critNormalize ? crit.total() / critNormalize : 1;
     }
