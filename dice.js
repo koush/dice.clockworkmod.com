@@ -139,14 +139,26 @@ dice.prototype.reroll = function(d) {
   if (d.constructor.name == 'Number')
     d = scalarDice(d);
 
-  var ret = Object.assign(new dice(), this);
+  var removed = Object.assign(new dice(), this);
 
   var numbers = d.keys();
   for (var face of numbers) {
-    ret = ret.deleteFace(face);
+    removed = removed.deleteFace(face);
   }
 
-  return ret.combine(this);
+  var faces = this.keys().length;
+  var ret = new dice();
+  for (var face of this.keys()) {
+    if (!removed[face]) {
+      ret = ret.combine(removed);
+      ret = ret.combine(this);
+    }
+    else {
+      ret = ret.combine(removed);
+    }
+  }
+
+  return ret;
 }
 
 dfunc('max', function(a, b) {
