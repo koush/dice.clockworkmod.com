@@ -161,6 +161,10 @@ dice.prototype.reroll = function(d) {
   return ret;
 }
 
+dfunc('eq', function(a, b) {
+  return a == b ? 1 : 0;
+})
+
 dfunc('max', function(a, b) {
   return Math.max(a, b);
 })
@@ -196,6 +200,10 @@ dfunc('ac', function(a, b) {
   ret[1] = 0;
   return ret;
 });
+
+dfunc('divideRoundUp', function(a, b) {
+  return Math.ceil(a / b);
+})
 
 dfunc('divide', function(a, b) {
   return a / b;
@@ -639,6 +647,17 @@ function parseOperation(s) {
     case '*':
       assertToken(s, '*');
       return dice.prototype.multiply;
+    case '/':
+      assertToken(s, '/');
+      if (s[0] == '/') {
+        assertToken(s, '/');
+        return dice.prototype.divideRoundDown;
+      } else {
+        return dice.prototype.divideRoundUp;
+      }
+    case '=':
+      assertToken(s, '=');
+      return dice.prototype.eq;
   }
 }
 
